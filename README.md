@@ -1,8 +1,8 @@
-# Parallel Computing - A workshop on how to spam the Orion compute cluster
+# Parallel Computing - A tutorial on how to spam the Orion compute cluster
 
 > Orion is the High Performance Computing (HPC) at the Norwegian University of Life Sciences (NMBU)
 
-This is a hands-on workshop introducing users of Orion to some techniques to run their scripts in parallel.
+This is a hands-on tutorial that introducing users of Orion to some techniques to run their scripts in parallel.
 
 Overview: 
 
@@ -16,11 +16,12 @@ Overview:
 
 ## Setting up for the workshop
 
-It is recommended to clone this repo to somewhere on your home directory on Orion. This can be done in RStudio on Orion by creating a new project from git repo.
+It is recommended to clone this repo to somewhere in your home directory on Orion. This can be done in RStudio on Orion by creating a new project from git repo:
 
+0. (connect to VPN if you are using mac)
 1. open the Orion Wiki https://orion.nmbu.no/ (you will use this later)
-2. open Jupyterhub and launch Rstudio (whatever version)
-3. In RStudio: File -> New project -> Version Control -> Git -> Paste repo URL (at github click the gree Code button which will give you the URL. Use the HTTPS URL)
+2. open Jupyterhub (there is a  link in the Orion Wiki) and launch Rstudio (whatever version)
+3. In RStudio: File -> New project -> Version Control -> Git -> Paste repo URL (at github click the green Code button which will give you the URL. Use the HTTPS URL)
 
 ## Intro
 
@@ -30,10 +31,12 @@ The computer is taking too long to process the data!
 
 Most programs run in serial, i.e. it is running one instruction at a time. So even if you run it on a compute cluster with thousands of cores it will not finish any faster. To speed things up we need to run the program in parallel across multiple cores.
 
+![Image illustrating poor multi-core utilization](https://i.redd.it/9tu18n684z331.jpg)
+
 ### Some vocabulary
 
 * **CPU** - Central Processing Unit a.k.a. the processor. Typically refers to the physical chip which contain multiple **cores**, but it sometimes used to refer to a single core (e.g. "CPU hours" should be called "core hours").
-* **core** - A single execution core within a CPU. Can run a single program (thread) at a time.
+* **core** - A single processing core within a CPU. Can run a single program (thread) at a time.
 * **process** - An instance of a active program. Typically has a single thread.
 * **thread** - A process can seperate its execution into multiple threads that can run in parallel on multiple cores. Threads have shared memory which makes communication between threads easy.
 
