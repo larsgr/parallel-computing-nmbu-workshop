@@ -29,9 +29,11 @@ It is recommended to clone this repo to somewhere in your home directory on Orio
 
 The computer is taking too long to process the data!
 
-Most programs run in serial, i.e. it is running one instruction at a time. So even if you run it on a compute cluster with thousands of cores it will not finish any faster. To speed things up we need to run the program in parallel across multiple cores.
+Most programs run in serial, i.e. it is running one instruction at a time on a single core. So even if you run it on a compute cluster with thousands of cores it will not finish any faster (see Figure 1). To speed things up we need to run the program in parallel across multiple cores. 
 
 ![Image illustrating poor multi-core utilization](https://i.redd.it/9tu18n684z331.jpg)
+**Figure 1: poorly utilized cores**
+
 
 ### Some vocabulary
 
@@ -43,11 +45,11 @@ Most programs run in serial, i.e. it is running one instruction at a time. So ev
 * **Hyper-threading:tm:** - An intel technology that makes it look like the CPU has twice as many cores.
 
 
-## Part 1: Array jobs
+## Solution 1: Array jobs
 
 If you need to perform the same task multiple times but with different data and the order of execution is irrelevant, then you can submit an **Array job** on SLURM using `sbatch --array=indexes`.
 
 When submitting an array job, SLURM will execute your script as many times the number of `indexes` you provide (`indexes` being a set of numbers that identify each individual job). The individual jobs will be distributed across the cluster, i.e. they may end up running on different nodes.
 
-> Exercise 1: see the [exercise1](exercise1/) directory
+> Exercise 1: Go to the [exercise1](exercise1/) directory
 
