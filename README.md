@@ -31,8 +31,9 @@ The computer is taking too long to process the data!
 
 Most programs run in serial, i.e. it is running one instruction at a time on a single core. So even if you run it on a compute cluster with thousands of cores it will not finish any faster (see Figure 1). To speed things up we need to run the program in parallel across multiple cores. 
 
-![Image illustrating poor multi-core utilization](https://i.redd.it/9tu18n684z331.jpg)
-**Figure 1: poorly utilized cores**
+>![Image illustrating poor multi-core utilization](https://i.redd.it/9tu18n684z331.jpg)
+>
+>**Figure 1: poorly utilized cores**
 
 
 ### Some vocabulary
