@@ -4,7 +4,7 @@ The script `my_script.sh` contains a script that processes a file from the direc
 
 * Go to the Orion Wiki https://orion.nmbu.no/ and read the "Array jobs" sub-section on the "SLURM" page.
 * Now use what you learned to turn the script into an array job script.
-* To test the script try running it on the first 30 files, but limit the number of concurrent jobs to five at a time.
+* To test the script try running it on the first 4 files, but limit the number of concurrent jobs to 2 at a time.
 * Use `sacct` to look at the runnning/finished jobs. To display more useful info use `sacct --format JobID,JobName,Partition,AllocCPUS,ReqMem,MaxRSS,State,ExitCode,elapsed,userCPU,node`
 
 Example of the output from sacct:
