@@ -51,7 +51,7 @@ If you need to perform the same task multiple times but with different data and 
 
 When submitting an array job, SLURM will execute your script as many times the number of `indexes` you provide (`indexes` being a set of numbers that identify each individual job). The individual jobs will be distributed across the cluster, i.e. they may end up running on different nodes.
 
-It is possible to limit the number of jobs running at the same time. This is important if you have a large array with thousands of jobs, as it would allocate all the cores on the cluster. 
+It is possible to limit the number of jobs running at the same time. This is important if you have a large array with thousands of jobs, as it would otherwise allocate all the cores on the cluster (which is a nuisance for the other users). 
 
 ### Exercise 1
 
@@ -71,7 +71,7 @@ Although they use different terms is usually means the same.
 
 ### Multi-threading vs multiple processes
 
-There are two different ways for a program to run in parallel, either it can start more processes or it start more threads within the process. You can see this if you inspect the running processes with `top` as it will by default show one entry per process. Threads are typically more efficient as they are faster to spawn and share the same resources as the parent process. 
+There are two different ways for a program to run in parallel, either it can start more processes or it can start more threads within the process. You can see this if you inspect the running processes with `top` as it will by default show one entry per process, multi-threaded applications can show more than 100% CPU usage. Threads are typically more efficient as they are faster to spawn and share the same resources as the parent process. 
 
 ### Efficiency of parallel software may vary
 
@@ -92,13 +92,14 @@ In some cases you may want to start multiple process to run in parallel from a b
 The `&` operator is used to run a command in the background. As opposed to normal execution, where the script will wait until each command is finished before continuing, the scipt will continue and allow you to run more processes in parallel.
 
 For example if you want to zip two files in background:
-´´´bash
+
+```bash
 gzip bigfile1 & gzip bigfile2 &
-´´´
+```
 
 This can be used in a loop. Here is an example that executes a command on all the files in a folder:
 
-´´´bash
+```bash
 indir="/path/to/some/files"
 for filename in $indir/*
 do
@@ -109,7 +110,7 @@ done
 wait
 
 echo All done!
-´´´
+```
 
 The `wait` comand is used to wait for all sub-processes that are running in the background.
 
@@ -148,3 +149,56 @@ ls $indir | xargs -d "\n" -P 2 -i someCommand {}
 
 > Exercise 2: Go to the [exercise2](exercise2/) directory
 
+
+
+## Parallel execution in R
+
+If you do a lot of heavy computation in R then it can be helpful to speed it up by running it in parallel on the Orion cluster. Here we will look at a few ways of achieving this.
+
+### mclapply
+
+`mclapply()` is the "multi-core" version of `lapply()`. If you are familiar with `lapply()` then this is probably the easiest way to execute in parallel. You just need to specify the number of cores to use with the parameter `mc.cores`.
+
+The following example runs the function `myfunction()` 100 times using 4 cores (i.e. 25 times each):
+```
+library(parallel)
+
+results <- mclapply(1:100, myfunction, mc.cores = 4)
+```
+
+Under the hood `mclapply()` uses "fork" to make duplicates of the parent process. This has the advantage that all the loaded data and libraries are available to the called function.
+
+> Note: Because it uses "fork", `mclapply` does not work on windows. If you try it would just work like a normal `lapply`
+
+
+### Socket cluster with parLapply
+
+Another function in the `parallel` library is parLapply....
+
+```r
+library(parallel)
+
+cl <- makeCluster(4)
+
+results <- parLapply(cl,1:10,myfunction)
+
+stopCluster(cl)
+```
+
+* makeCluster() starts new processes that wait for commands.
+* stopCluster() to stop these processes
+
+The slave/child processes do not inherit the data/libraries loaded so it has to be done explicitly
+
+* clusterExport() Copy data to all child processes
+* clusterEvalQ() Evaluate expression on each child process. E.g. load libraries.
+
+
+
+
+It comes with the `parallel` library that comes pre-installed with R. 
+### Running R on the cluster
+
+You have to load the R module. If you usually use Rstudio then make sure to use the same version so that the same packages are available.
+
+## Using workflow managers (e.g. nextflow/snakemake)
