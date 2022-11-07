@@ -153,7 +153,7 @@ ls $indir | xargs -d "\n" -P 2 -i someCommand {}
 
 ## Parallel execution in R
 
-If you do a lot of heavy computation in R then it can be helpful to speed it up by running it in parallel on the Orion cluster. Here we will look at a few ways of achieving this.
+If you do a lot of heavy computation in R then it can be helpful to speed it up by running it in parallel on the Orion cluster. Here we will look at a some ways of achieving this.
 
 ### mclapply
 
@@ -173,8 +173,9 @@ Under the hood `mclapply()` uses "fork" to make duplicates of the parent process
 
 ### Socket cluster with parLapply
 
-Another function in the `parallel` library is parLapply....
+Another function in the `parallel` library is `parLapply()`. This method requires you to first start up the parallel worker processes first with the `makeCluster()` function. While it is possible to use forking to start the processes, the default is to start them as new R processes. Communication with the worker processes is performed over the network interface ("socket" refers to network socket).
 
+Example:
 ```r
 library(parallel)
 
@@ -185,20 +186,75 @@ results <- parLapply(cl,1:10,myfunction)
 stopCluster(cl)
 ```
 
-* makeCluster() starts new processes that wait for commands.
-* stopCluster() to stop these processes
+* `makeCluster()` starts new processes that wait for commands.
+* `stopCluster()` to stop these processes.
 
-The slave/child processes do not inherit the data/libraries loaded so it has to be done explicitly
+The worker processes do not inherit the data or loaded libraries, so "export" of data to the worksers has to be done explicitly using the functions:
 
-* clusterExport() Copy data to all child processes
-* clusterEvalQ() Evaluate expression on each child process. E.g. load libraries.
-
-
+* `clusterExport()` Copy data to all workers
+* `clusterEvalQ()` Evaluate expression on each worker once. E.g. to load libraries on the workers.
 
 
-It comes with the `parallel` library that comes pre-installed with R. 
-### Running R on the cluster
+### foreach %dopar%
 
-You have to load the R module. If you usually use Rstudio then make sure to use the same version so that the same packages are available.
+The `foreach` package offers a different way to do loops that is somewhere between `for` loops and `lapply`. But more importantly in our case, it can run in parallel. Unlike the `parallel` library that comes with the base installation of R, you have to install the packages `foreach` and `doParallel` first.
+
+Example that runs a foreach loop on 4 cores in prallel:
+```r
+install.packages(c("foreach","doParallel"))
+library(foreach)
+library(doParallel)
+
+registerDoParallel(4)
+
+result <- foreach(i=1:10) %dopar% {
+  # do stuff here
+}
+
+```
+
+`foreach()` will automatically detect variables to export to the workers. Libraries will not be loaded automatically, but you can specify which to load on the workers with the `.packages` argument.
+
+The `doParallel` package is is a so-called "backend" for the `foreach` that uses the `parallel` package under the hood. The `registerDoParallel()` can either take a cluster definition created with `makeCluster()` or just the number of cores. If you just specify the number of cores it will use "fork" if available (i.e. if not Windows).
+
+There are other backends available, e.g. doMPI or doFuture.
+
+### Some other relevant packages:
+
+* The `future` package and friends (see https://www.futureverse.org/). High level interface for parallel execution in R. Supports many different backends.
+* `BiocParallel` implements `bplapply()` and similar and is used by many bioconductor packages. Supports many different backends.
+
+
+
+### Executing R scripts on the commandline
+
+To execute an R script from the commandline you need to first load the R module and then use the `Rscript` command. Example: 
+
+```shell
+module load R/4.0.4
+
+Rscript my_script.R
+```
+
+> It is a good idea to use the same version of R that you use in Rstudio. That way the same packages should be available on the commandline as in RStudio.
+
+### Reading $SLURM_NTASKS in R
+
+When executing in parallel you need to specify the number of cores to use. This should be equal to the number of cores allocated in SLURM, e.g. with the `sbatch --ntasks` argument. To read environment variables in R use `Sys.getenv()`.
+
+Example that reads the `$SLURM_NTASKS` environment variable, with default value 1 if not set:
+```r
+numCores <- as.integer(Sys.getenv("SLURM_NTASKS",unset = 1))
+```
+
+### Exercise 3
+
+The script `calcPI.R` contains an algorithm for estimating PI (not very efficiently). Use what you have learned to make it run in parallel.
+
+* Modify the R script to run in parallel using one of the methods mentioned.
+* Make it so that it takes the number of cores from the SLURM_NTASKS environment variable
+* Create a sbatch job script that launches the R script
+* Try submitting it with different number of `--ntasks` e.g. 2, 4 and 6
+* Check the logs to see how long it took each time
 
 ## Using workflow managers (e.g. nextflow/snakemake)
