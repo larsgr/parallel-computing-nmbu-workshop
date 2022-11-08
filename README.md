@@ -257,4 +257,42 @@ The script `calcPI.R` contains an algorithm for estimating PI (not very efficien
 * Try submitting it with different number of `--ntasks` e.g. 2, 4 and 6
 * Check the logs to see how long it took each time
 
-## Using workflow managers (e.g. nextflow/snakemake)
+## Short note about workflow managers (e.g. nextflow/snakemake)
+
+So far we have mentioned how to run a single program/script in parallel. This might be enough for simple tasks but in most cases you want to run your data through several programs. This is refered to as a workflow or pipeline.
+
+The different programs in your workflow may have different resource requirements, i.e. different number of cores or amount of memory. Each program should therefore have their own SLURM job to allocate the correct resources. The best way to run such a workflow is to use a workflow manager such as snakemake or nextflow.
+
+### Workflows allow implicit parallelism
+
+Most scripts are inherently serial, i.e. they consist of a list of instructions that are executed one at a time, from top to bottom. Workflow structure is different. It is defined by the input and output of the tasks, i.e. the order of execution is arbitrary as long as the upstream tasks are performed first. This results in a directed acyclic graph structure with multiple paths that can be executed in parallel. E.g.:
+
+>![Example DAG from snakemake tutorial](media/dag_call.webp)
+>
+>**Example of a simple workflow graph**
+
+Workflow managers will run tasks in parallel when possible.
+
+### Cluster configuring
+
+Workflow managers do not automatically utilize slurm to submit jobs. Typically they will by default run the jobs locally using a specificied number of cores. To enable slurm they need to be configured.
+
+#### Example nextflow slurm config
+
+```plaintext
+process {
+    executor='slurm'
+}
+
+executor {
+  queueSize = 10
+  submitRateLimit = '10 sec'
+}
+```
+
+#### Snakemake slurm config
+
+It is recommended to setup a snakemake slurm "profile". See https://github.com/Snakemake-Profiles/slurm 
+
+When you have set up the profile you can use it by running snakemake with the `--profile slurm` argument.
+
