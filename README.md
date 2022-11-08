@@ -7,8 +7,7 @@ This is a hands-on tutorial that introducing users of Orion to some techniques t
 Overview: 
 
 * SLURM array jobs (exercise 1)
-* About software with built-in parallel functionality
-* (not sure) Parallel vs Distributed - single node vs multiple nodes. Multi-threading
+* Software with built-in parallelism and etc..
 * Parallel execution in bash scripts (exercise 2)
 * Parallel execution in R (exercise 3)
 * About workflow managers (snakemake/nextflow) and how they facilitate parallel execution
@@ -71,7 +70,25 @@ Although they use different terms is usually means the same.
 
 ### Multi-threading vs multiple processes
 
-There are two different ways for a program to run in parallel, either it can start more processes or it can start more threads within the process. You can see this if you inspect the running processes with `top` as it will by default show one entry per process, multi-threaded applications can show more than 100% CPU usage. Threads are typically more efficient as they are faster to spawn and share the same resources as the parent process. 
+There are two different ways for a program to run in parallel, either it can start more processes or it can start more threads within the process. You can see this if you inspect the running processes with `top` as it will by default show one entry per process, multi-threaded applications can show more than 100% CPU usage. Threads are typically more efficient as they are faster to spawn and share the same resources as the parent process.
+
+### MPI (OpenMPI)
+
+Some programs require MPI to run in parallel. MPI stands for Message Passing Interface and is a protocol used by parallel programs to communicate between the different processes. OpenMPI is an open-source implementation of MPI which is available on Orion.
+
+Here is an example of a sbatch script for running an MPI program on 4 processes:
+```
+#!/bin/bash
+#SBATCH --ntasks 4
+
+module load OpenMPI
+
+mpirun <someMPIenabledProgram>
+```
+
+The `mpirun` command will launch 4 processes (it is somehow aware of the allocated resources in SLURM). And assign them with different "ranks", i.e. ID number of the processes. The program should then be able to use the MPI api to divide the labour between the processes.
+
+MPI programs can (in theory..) execute across several nodes.
 
 ### Efficiency of parallel software may vary
 
@@ -80,6 +97,9 @@ Some algorithms/tasks are more difficult parallelize than other. Even though sof
 ### Memory/cpu balance
 
 Be aware of the memory usage when running many jobs concurrently as the nodes might run out of memory before running out of available cores. When you run a program in parallel in separate processes like in an array job, each task will require memory, software that uses multi-threading can share memory and therefore use less total.
+
+
+
 
 
 
