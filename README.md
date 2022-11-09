@@ -6,6 +6,7 @@ This is a hands-on tutorial that introducing users of Orion to some techniques t
 
 Overview: 
 
+* Short intro
 * SLURM array jobs (exercise 1)
 * Software with built-in parallelism and etc..
 * Parallel execution in bash scripts (exercise 2)
@@ -16,12 +17,10 @@ Overview:
 
 It is recommended to clone this repo to somewhere in your home directory on Orion. This can be done in RStudio on Orion by creating a new project from git repo:
 
-0. (connect to VPN if you are using mac)
-1. open the Orion Wiki https://orion.nmbu.no/ (you will use this later)
-2. open Jupyterhub (there is a  link in the Orion Wiki) and launch Rstudio (whatever version)
-3. In RStudio: File -> New project -> Version Control -> Git -> Paste repo URL (at github click the green Code button which will give you the URL. Use the HTTPS URL)
+1. open Jupyterhub (there is a  link in the Orion Wiki) and launch Rstudio (whatever version)
+2. In RStudio: File -> New project -> Version Control -> Git -> Paste repo URL (at github click the green **Code** button which will give you the URL. Use the HTTPS URL)
 
-## Intro
+## 1. Intro
 
 ### The problem
 
@@ -44,7 +43,7 @@ Most programs run in serial, i.e. it is running one instruction at a time on a s
 * **Hyper-threading:tm:** - An intel technology that makes it look like the CPU has twice as many cores.
 
 
-## Array jobs
+## 2. Array jobs
 
 If you need to perform the same task multiple times but with different data and the order of execution is irrelevant, then you can submit an **Array job** on SLURM using `sbatch --array=indexes`.
 
@@ -56,7 +55,9 @@ It is possible to limit the number of jobs running at the same time. This is imp
 
 > Exercise 1: Go to the [exercise1](exercise1/) directory
 
-## About software with built-in parallel functionality 
+
+
+## 3. About software with built-in parallel functionality 
 
 Most respectable bioinformatic tools have the ability to run in parallel. You can check their help to see if there is an option to run in parallel. Different tools use different names for their option, e.g:
 
@@ -103,7 +104,7 @@ Be aware of the memory usage when running many jobs concurrently as the nodes mi
 
 
 
-## Parallel execution in bash scripts
+## 4. Parallel execution in bash scripts
 
 In some cases you may want to start multiple process to run in parallel from a bash script. There are several ways to achieve this:
 
@@ -171,7 +172,7 @@ ls $indir | xargs -d "\n" -P 2 -i someCommand {}
 
 
 
-## Parallel execution in R
+## 5. Parallel execution in R
 
 If you do a lot of heavy computation in R then it can be helpful to speed it up by running it in parallel on the Orion cluster. Here we will look at a some ways of achieving this.
 
@@ -277,7 +278,10 @@ The script `calcPI.R` contains an algorithm for estimating PI (not very efficien
 * Try submitting it with different number of `--ntasks` e.g. 2, 4 and 6
 * Check the logs to see how long it took each time
 
-## Short note about workflow managers (e.g. nextflow/snakemake)
+
+
+
+## 6. Short note about workflow managers (e.g. nextflow/snakemake)
 
 So far we have mentioned how to run a single program/script in parallel. This might be enough for simple tasks but in most cases you want to run your data through several programs. This is refered to as a workflow or pipeline.
 
