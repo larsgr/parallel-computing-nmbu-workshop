@@ -2,7 +2,7 @@
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
 #SBATCH --mem=1G
-#SBATCH --partition=COURSE 
+#SBATCH --partition=COURSE-CPU
 #SBATCH --job-name=my_array_script
 #SBATCH --output=arrayTestOutput-%j-%a.out
 

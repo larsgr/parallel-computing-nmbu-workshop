@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --mem=1G
-#SBATCH --partition=COURSE
+#SBATCH --partition=COURSE-CPU
 #SBATCH --job-name=my_parallel_job
 
 module load parallel

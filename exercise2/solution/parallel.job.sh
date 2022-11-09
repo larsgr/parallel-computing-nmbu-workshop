@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --nodes=1
 #SBATCH --mem=1G
-#SBATCH --partition=COURSE
+#SBATCH --partition=COURSE-CPU
 #SBATCH --constraint=avx2         # apparently the parallel command is compiled for newer CPUs
 #SBATCH --job-name=my_parallel_job
 
